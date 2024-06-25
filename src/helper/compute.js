@@ -154,7 +154,8 @@ const METHOD = {
       fteChangeDate >= periodStartDate && fteChangeDate <= periodEndDate;
     const isFirstDayOfPayPeriod =
       fteChangeDate.getTime() === periodStartDate.getTime();
+    const isPastPayPeriod = fteChangeDate < periodStartDate;
 
-    return isFirstDayOfPayPeriod || isWithinPayPeriod;
+    return isFirstDayOfPayPeriod || isWithinPayPeriod || isPastPayPeriod;
   },
 };
