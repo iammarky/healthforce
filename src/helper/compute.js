@@ -1,9 +1,22 @@
 export const COMPUTE = {
   TOTAL_FTE: async (start, end, data) => {
     // Get the sum of all FTE
-    const sumFunctional = parseFloat(
-      data.reduce((acc, item) => acc + parseFloat(item['FTE']), 0),
-    ).toFixed(2);
+    const sumFunctional = data.reduce((acc, item) => {
+      const fte = parseFloat(item['FTE']);
+      const new_fte = parseFloat(item['FTE Change']);
+      const dateOfFTEChange = item['Date of FTE Change'];
+      const payPeriodStart = start;
+      const payPeriodEnd = end;
+
+      // Check if the FTE change is within the pay period
+      if (
+        METHOD.checkFTEChange(dateOfFTEChange, payPeriodStart, payPeriodEnd)
+      ) {
+        return acc + (isNaN(new_fte) ? 0 : new_fte);
+      } else {
+        return acc + (isNaN(fte) ? 0 : fte);
+      }
+    }, 0);
 
     // Deduct the resigned FTE
     const totalFunctional =
@@ -128,5 +141,20 @@ export const COMPUTE = {
     );
 
     return totalNotYetStarted;
+  },
+};
+
+const METHOD = {
+  checkFTEChange: (dateOfFTEChange, payPeriodStart, payPeriodEnd) => {
+    const fteChangeDate = new Date(dateOfFTEChange);
+    const periodStartDate = new Date(payPeriodStart);
+    const periodEndDate = new Date(payPeriodEnd);
+
+    const isWithinPayPeriod =
+      fteChangeDate >= periodStartDate && fteChangeDate <= periodEndDate;
+    const isFirstDayOfPayPeriod =
+      fteChangeDate.getTime() === periodStartDate.getTime();
+
+    return isFirstDayOfPayPeriod || isWithinPayPeriod;
   },
 };
