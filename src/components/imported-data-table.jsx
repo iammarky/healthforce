@@ -18,7 +18,6 @@ import {
   getCoreRowModel,
   getSortedRowModel,
 } from '@tanstack/react-table';
-import reverseDateFormat from '../helper/date';
 
 export default function ImportedDataTable({ data, columns }) {
   const [sorting, setSorting] = React.useState([]);
