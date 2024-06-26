@@ -37,7 +37,7 @@ export default function ImportedDataTable({ data, columns }) {
       <Center>
         <Text fontSize="3xl">Data from CSV</Text>
       </Center>
-      <Table variant="striped" colorScheme="teal">
+      <Table variant="striped" colorScheme="teal" backgroundColor="white">
         <Thead>
           {table.getHeaderGroups().map(headerGroup => (
             <Tr key={headerGroup.id}>

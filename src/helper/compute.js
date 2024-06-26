@@ -66,19 +66,36 @@ export const COMPUTE = {
   AWAY: async (start, end, data) => {
     // Filter all away that is within the range
     const filteredData = data.filter(item => {
-      const itemStart = new Date(item['Away Start']);
-      const itemEnd = new Date(item['Away Return']);
-      const rangeStart = new Date(start);
-      const rangeEnd = new Date(end);
+      const awayStart = new Date(item['Away Start']);
+      const awayEnd = new Date(item['Away Return']);
+      const payPeriodStart = new Date(start);
+      const payPeriodEnd = new Date(end);
 
-      return itemStart < rangeEnd && itemEnd > rangeStart;
+      if (METHOD.isAway(awayStart, awayEnd, payPeriodStart, payPeriodEnd)) {
+        console.log(item['First Name'], item['Last Name'], item['FTE']);
+      }
+
+      return METHOD.isAway(awayStart, awayEnd, payPeriodStart, payPeriodEnd);
     });
 
-    // Get the sum of the filtered away
-    const totalAway = filteredData.reduce(
-      (acc, item) => acc + parseFloat(item['FTE']),
-      0,
-    );
+    console.log('---------------------');
+
+    const totalAway = filteredData.reduce((acc, item) => {
+      const fte = parseFloat(item['FTE']);
+      const new_fte = parseFloat(item['FTE Change']);
+      const dateOfFTEChange = item['Date of FTE Change'];
+      const payPeriodStart = start;
+      const payPeriodEnd = end;
+
+      // Check if the FTE change is within the pay period
+      if (
+        METHOD.checkFTEChange(dateOfFTEChange, payPeriodStart, payPeriodEnd)
+      ) {
+        return acc + (isNaN(new_fte) ? 0 : new_fte);
+      } else {
+        return acc + (isNaN(fte) ? 0 : fte);
+      }
+    }, 0);
 
     return totalAway;
   },
@@ -157,5 +174,17 @@ const METHOD = {
     const isPastPayPeriod = fteChangeDate < periodStartDate;
 
     return isFirstDayOfPayPeriod || isWithinPayPeriod || isPastPayPeriod;
+  },
+  isAway: (awayStart, awayEnd, payPeriodStart, payPeriodEnd) => {
+    const awayStartDate = new Date(awayStart);
+    const awayEndDate = new Date(awayEnd);
+    const periodStartDate = new Date(payPeriodStart);
+    const periodEndDate = new Date(payPeriodEnd);
+
+    return (
+      (awayStartDate <= periodEndDate && awayStartDate >= periodStartDate) ||
+      (awayEndDate >= periodEndDate && awayEndDate <= periodStartDate) ||
+      (awayStartDate <= periodStartDate && awayEndDate >= periodEndDate)
+    );
   },
 };
