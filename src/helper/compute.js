@@ -181,10 +181,6 @@ const METHOD = {
     const periodStartDate = new Date(payPeriodStart);
     const periodEndDate = new Date(payPeriodEnd);
 
-    return (
-      (awayStartDate <= periodEndDate && awayStartDate >= periodStartDate) ||
-      (awayEndDate >= periodEndDate && awayEndDate <= periodStartDate) ||
-      (awayStartDate <= periodStartDate && awayEndDate >= periodEndDate)
-    );
+    return awayStartDate <= periodEndDate && awayEndDate >= periodStartDate;
   },
 };
