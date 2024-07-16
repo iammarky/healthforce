@@ -8,7 +8,8 @@ import {
   Td,
   Center,
   Text,
-  Input,
+  NumberInput,
+  NumberInputField,
 } from '@chakra-ui/react';
 
 export default function ProjectionsTable({
@@ -42,6 +43,21 @@ export default function ProjectionsTable({
         </Thead>
         <Tbody>
           {projections.map((row, index) => {
+            let showInput = false;
+
+            // Parse the current row's start date
+            const currentStartDate = new Date(row.start);
+
+            // Show the input box only for the first pay period in each month
+            if (
+              index === 0 ||
+              (index > 0 &&
+                new Date(projections[index - 1].start).getMonth() !==
+                  currentStartDate.getMonth())
+            ) {
+              showInput = true;
+            }
+
             return (
               <Tr key={index}>
                 <Td>
@@ -55,18 +71,26 @@ export default function ProjectionsTable({
                 <Td> {row.resigned} </Td>
                 <Td> {row.away} </Td>
                 <Td> {row.orientation} </Td> */}
-                <Td>
-                  <Input
-                    placeholder={`${new Date(row.start).toLocaleString(
-                      'en-US',
-                      { month: 'long' },
-                    )} Turbulence`}
-                    value={row.turbulence || ''}
-                    onChange={event => {
-                      handleInputTurbulence(index, event);
-                    }}
-                  />
-                </Td>
+                {showInput ? (
+                  <Td>
+                    <NumberInput>
+                      <NumberInputField
+                        placeholder={`${currentStartDate.toLocaleString(
+                          'en-US',
+                          {
+                            month: 'long',
+                          },
+                        )} Turbulence`}
+                        value={row.turbulence || ''}
+                        onChange={event => {
+                          handleInputTurbulence(index, event);
+                        }}
+                      />
+                    </NumberInput>
+                  </Td>
+                ) : (
+                  <Td> </Td>
+                )}
                 <Td> {row.predicted_functional} </Td>
                 <Td> {row.predicted_functional_travelers} </Td>
                 <Td> {row.predicted_functional_travelers_gap} </Td>

@@ -98,7 +98,7 @@ const App = () => {
               range.end,
               parsedData.data,
             ),
-            turbulence: null,
+            turbulence: 0,
             predicted_functional: 0,
             predicted_functional_travelers: 0,
             predicted_functional_travelers_gap: 0,
@@ -112,9 +112,17 @@ const App = () => {
     }
   }, [range, selectedDate, parsedData]);
 
-  const handleInputTurbulence = (index, event) => {
+  const handleInputTurbulence = async (index, event) => {
     const newProjections = [...projections];
-    newProjections[index].turbulence = parseFloat(event.target.value);
+
+    if (event.target.value) {
+      projections[index].turbulence = parseFloat(event.target.value);
+    } else {
+      projections[index].turbulence = 0;
+    }
+
+    await COMPUTE.PREDICTED_FUNCTIONAL(index, event.target.value, projections);
+
     setProjections(newProjections);
   };
 

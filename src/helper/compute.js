@@ -174,6 +174,38 @@ export const COMPUTE = {
 
     return totalNotYetStarted;
   },
+  PREDICTED_FUNCTIONAL: async (index, turbulence, projections) => {
+    // Ensure projections array is not empty and index is within bounds
+    if (!projections.length || index < 0 || index >= projections.length) {
+      throw new Error('Invalid index or projections array.');
+    }
+
+    // Iterate through each projection and compute predicted_functional
+    projections.forEach((projection, idx) => {
+      let accumulatedTurbulence = 0;
+
+      // Accumulate turbulence from all previous projections
+      for (let i = 0; i < idx; i++) {
+        accumulatedTurbulence += parseFloat(projections[i].turbulence);
+      }
+
+      // Compute predicted_functional
+      const functional = parseFloat(projection.functional);
+      const currentTurbulence = parseFloat(projection.turbulence);
+      const predictedFunctional =
+        functional - (currentTurbulence + accumulatedTurbulence);
+      projection.predicted_functional = predictedFunctional.toFixed(2);
+
+      // Compute predicted_functional + travelers for the current pay period only
+      const currentTravelers = parseFloat(projection.travelers);
+      const predictedFunctionalTravelers =
+        predictedFunctional + currentTravelers;
+      projection.predicted_functional_travelers =
+        predictedFunctionalTravelers.toFixed(2);
+    });
+
+    return projections;
+  },
 };
 
 const METHOD = {
