@@ -33,7 +33,7 @@ export const COMPUTE = {
       const itemStart = new Date(item['Resignation']);
       const rangeEnd = new Date(end);
 
-      return itemStart > rangeEnd;
+      return itemStart >= rangeEnd;
     });
 
     // Get the sum of the filtered travelers
@@ -228,7 +228,7 @@ const METHOD = {
     const periodStartDate = new Date(payPeriodStart);
     const periodEndDate = new Date(payPeriodEnd);
 
-    return awayStartDate <= periodEndDate && awayEndDate >= periodStartDate;
+    return awayStartDate <= periodEndDate && awayEndDate > periodStartDate;
   },
   isInOrientation: (
     payPeriodStart,

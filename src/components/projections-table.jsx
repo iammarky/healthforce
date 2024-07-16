@@ -28,11 +28,11 @@ export default function ProjectionsTable({
             <Th>Functional</Th>
             <Th>Non-Functional</Th>
             <Th>Travelers</Th>
-            {/* <Th>Not Yet Started</Th>
+            <Th>Not Yet Started</Th>
             <Th>Total FTE</Th>
             <Th>Resigned</Th>
             <Th>Away</Th>
-            <Th>Orientation</Th> */}
+            <Th>Orientation</Th>
             <Th>Turbulence</Th>
             <Th>Predicted Functional</Th>
             <Th>Predicted Functional + Travelers</Th>
@@ -61,20 +61,21 @@ export default function ProjectionsTable({
             return (
               <Tr key={index}>
                 <Td>
-                  {row.start} - {row.end}{' '}
+                  {row.start} - {row.end}
                 </Td>
                 <Td> {row.functional} </Td>
                 <Td> {row.non_functional} </Td>
                 <Td> {row.travelers} </Td>
-                {/* <Td> {row.not_yet_started} </Td>
+                <Td> {row.not_yet_started} </Td>
                 <Td> {row.total_fte} </Td>
                 <Td> {row.resigned} </Td>
                 <Td> {row.away} </Td>
-                <Td> {row.orientation} </Td> */}
+                <Td> {row.orientation} </Td>
                 {showInput ? (
                   <Td>
                     <NumberInput>
                       <NumberInputField
+                        key={`${row.start}-${row.end}`}
                         placeholder={`${currentStartDate.toLocaleString(
                           'en-US',
                           {
