@@ -47,19 +47,36 @@ export const COMPUTE = {
   ORIENTATION: async (start, end, data) => {
     // Filter all orientation that is within the range
     const filteredData = data.filter(item => {
-      const itemStart = new Date(item['Start']);
-      const itemEnd = new Date(item['Orientation End']);
-      const rangeStart = new Date(start);
-      const rangeEnd = new Date(end);
+      const orientationStart = new Date(item['Start']);
+      const orientationEnd = new Date(item['Orientation End']);
+      const payPeriodStart = new Date(start);
+      const payPeriodEnd = new Date(end);
 
-      return itemStart <= rangeEnd && itemEnd >= rangeStart;
+      return METHOD.isInOrientation(
+        payPeriodStart,
+        payPeriodEnd,
+        orientationStart,
+        orientationEnd,
+      );
     });
 
     // Get the sum of the filtered orientation
-    const totalOrientation = filteredData.reduce(
-      (acc, item) => acc + parseFloat(item['FTE']),
-      0,
-    );
+    const totalOrientation = filteredData.reduce((acc, item) => {
+      const fte = parseFloat(item['FTE']);
+      const new_fte = parseFloat(item['FTE Change']);
+      const dateOfFTEChange = item['Date of FTE Change'];
+      const payPeriodStart = start;
+      const payPeriodEnd = end;
+
+      // Check if the FTE change is within the pay period
+      if (
+        METHOD.checkFTEChange(dateOfFTEChange, payPeriodStart, payPeriodEnd)
+      ) {
+        return acc + (isNaN(new_fte) ? 0 : new_fte);
+      } else {
+        return acc + (isNaN(fte) ? 0 : fte);
+      }
+    }, 0);
 
     return totalOrientation;
   },
@@ -71,14 +88,12 @@ export const COMPUTE = {
       const payPeriodStart = new Date(start);
       const payPeriodEnd = new Date(end);
 
-      if (METHOD.isAway(awayStart, awayEnd, payPeriodStart, payPeriodEnd)) {
-        console.log(item['First Name'], item['Last Name'], item['FTE']);
-      }
+      // if (METHOD.isAway(awayStart, awayEnd, payPeriodStart, payPeriodEnd)) {
+      //   console.log(item['First Name'], item['Last Name'], item['FTE']);
+      // }
 
       return METHOD.isAway(awayStart, awayEnd, payPeriodStart, payPeriodEnd);
     });
-
-    console.log('---------------------');
 
     const totalAway = filteredData.reduce((acc, item) => {
       const fte = parseFloat(item['FTE']);
@@ -97,7 +112,7 @@ export const COMPUTE = {
       }
     }, 0);
 
-    return totalAway;
+    return parseFloat(totalAway).toFixed(2);
   },
   NON_FUNCTIONAL: async (start, end, data) => {
     // Get the orientation and away
@@ -182,5 +197,20 @@ const METHOD = {
     const periodEndDate = new Date(payPeriodEnd);
 
     return awayStartDate <= periodEndDate && awayEndDate >= periodStartDate;
+  },
+  isInOrientation: (
+    payPeriodStart,
+    payPeriodEnd,
+    orientationStart,
+    orientationEnd,
+  ) => {
+    // Convert date strings to Date objects
+    const PS = new Date(payPeriodStart);
+    const PE = new Date(payPeriodEnd);
+    const OS = new Date(orientationStart);
+    const OE = new Date(orientationEnd);
+
+    // Check if orientation period overlaps with pay period
+    return OS <= PE && OE >= PS;
   },
 };

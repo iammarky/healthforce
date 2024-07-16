@@ -98,6 +98,7 @@ const App = () => {
               range.end,
               parsedData.data,
             ),
+            turbulence: null,
             predicted_functional: 0,
             predicted_functional_travelers: 0,
             predicted_functional_travelers_gap: 0,
@@ -110,6 +111,12 @@ const App = () => {
       setProjections(calculatedProjection);
     }
   }, [range, selectedDate, parsedData]);
+
+  const handleInputTurbulence = (index, event) => {
+    const newProjections = [...projections];
+    newProjections[index].turbulence = parseFloat(event.target.value);
+    setProjections(newProjections);
+  };
 
   return (
     <>
@@ -157,7 +164,10 @@ const App = () => {
             />
           </HStack>
         </SimpleGrid>
-        <ProjectionsTable projections={projections} />
+        <ProjectionsTable
+          projections={projections}
+          handleInputTurbulence={handleInputTurbulence}
+        />
         <Divider />
         <ImportedDataTable
           data={parsedData.data}
