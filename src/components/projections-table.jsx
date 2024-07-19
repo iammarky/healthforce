@@ -33,12 +33,12 @@ export default function ProjectionsTable({
             <Th>Resigned</Th>
             <Th>Away</Th>
             <Th>Orientation</Th>
-            <Th>Turbulence</Th>
+            {/* <Th>Turbulence</Th>
             <Th>Predicted Functional</Th>
             <Th>Predicted Functional + Travelers</Th>
             <Th>Predicted Functional + Travelers Gap</Th>
             <Th>Predicted Functional Gap (Needed)</Th>
-            <Th>Predicted Functional Gap (Target)</Th>
+            <Th>Predicted Functional Gap (Target)</Th> */}
           </Tr>
         </Thead>
         <Tbody>
@@ -94,11 +94,11 @@ export default function ProjectionsTable({
                 ) : (
                   <Td> </Td>
                 )}
-                <Td> {row.predicted_functional} </Td>
+                {/* <Td> {row.predicted_functional} </Td>
                 <Td> {row.predicted_functional_travelers} </Td>
                 <Td> {row.predicted_functional_travelers_gap} </Td>
                 <Td> {row.predicted_functional_gap_needed} </Td>
-                <Td> {row.predicted_functional_gap_target} </Td>
+                <Td> {row.predicted_functional_gap_target} </Td> */}
               </Tr>
             );
           })}

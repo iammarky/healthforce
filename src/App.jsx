@@ -24,8 +24,8 @@ const App = () => {
   const [projections, setProjections] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [range, setRange] = useState('');
-  const [needed, setNeeded] = useState(0);
-  const [target, setTarget] = useState(0);
+  const [needed, setNeeded] = useState('');
+  const [target, setTarget] = useState('');
 
   // Use useCallback to memoize the readFile function
   const readFile = useCallback(event => {
@@ -132,6 +132,8 @@ const App = () => {
     });
 
     const updatedProjections = await COMPUTE.PREDICTED_FUNCTIONAL(
+      parseFloat(needed),
+      parseFloat(target),
       newProjections,
     );
     setProjections(updatedProjections);

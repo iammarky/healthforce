@@ -174,7 +174,7 @@ export const COMPUTE = {
 
     return totalNotYetStarted;
   },
-  PREDICTED_FUNCTIONAL: async projections => {
+  PREDICTED_FUNCTIONAL: async (needed = 0, target = 0, projections) => {
     // Iterate through each projection and compute predicted_functional
     projections.forEach((projection, idx) => {
       let accumulatedTurbulence = 0;
@@ -197,6 +197,22 @@ export const COMPUTE = {
         predictedFunctional + currentTravelers;
       projection.predicted_functional_travelers =
         predictedFunctionalTravelers.toFixed(2);
+
+      // Compute predicted_functional + travelers gap (needed) for the current pay period only
+      const predictedFunctionalTravelersGap =
+        predictedFunctionalTravelers - needed;
+      projection.predicted_functional_travelers_gap =
+        predictedFunctionalTravelersGap.toFixed(2);
+
+      // Compute predicted_functional_gap_needed for the current pay period only
+      const predictedFunctionalGapNeeded = predictedFunctional - needed;
+      projection.predicted_functional_gap_needed =
+        predictedFunctionalGapNeeded.toFixed(2);
+
+      // Compute predicted_functional_gap_target for the current pay period only
+      const predictedFunctionalGapTarget = predictedFunctional - target;
+      projection.predicted_functional_gap_target =
+        predictedFunctionalGapTarget.toFixed(2);
     });
 
     return projections;
