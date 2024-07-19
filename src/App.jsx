@@ -1,5 +1,5 @@
 import Papa from 'papaparse';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Input,
   SimpleGrid,
@@ -27,7 +27,8 @@ const App = () => {
   const [needed, setNeeded] = useState(0);
   const [target, setTarget] = useState(0);
 
-  const readFile = event => {
+  // Use useCallback to memoize the readFile function
+  const readFile = useCallback(event => {
     const file = event.target.files[0];
     if (file) {
       Papa.parse(file, {
@@ -47,71 +48,25 @@ const App = () => {
         },
       });
     }
-  };
+  }, []);
 
-  const handleDateChange = event => {
+  // Use useCallback to memoize the handleDateChange function
+  const handleDateChange = useCallback(event => {
     setSelectedDate(event.target.value);
-  };
+  }, []);
 
-  const handleInputChange = event => {
+  // Use useCallback to memoize the handleInputChange function
+  const handleInputChange = useCallback(event => {
     setRange(event.target.value);
-  };
+  }, []);
 
   useEffect(() => {
-    const calculatedProjection = [];
-    if (selectedDate && range) {
-      const autoCalculate = async () => {
+    const autoCalculate = async () => {
+      if (selectedDate && range) {
         const ranges = generateDateRanges(selectedDate, range);
-        // for (const range of ranges) {
-        //   calculatedProjection.push({
-        //     start: range.start,
-        //     end: range.end,
-        //     functional: await COMPUTE.FUNCTIONAL(
-        //       range.start,
-        //       range.end,
-        //       parsedData.data,
-        //     ),
-        //     non_functional: await COMPUTE.NON_FUNCTIONAL(
-        //       range.start,
-        //       range.end,
-        //       parsedData.data,
-        //     ),
-        //     travelers: await COMPUTE.TRAVELERS(
-        //       range.start,
-        //       range.end,
-        //       parsedData.data,
-        //     ),
-        //     not_yet_started: await COMPUTE.NOT_YET_STARTED(
-        //       range.start,
-        //       range.end,
-        //       parsedData.data,
-        //     ),
-        //     total_fte: await COMPUTE.TOTAL_FTE(
-        //       range.start,
-        //       range.end,
-        //       parsedData.data,
-        //     ),
-        //     resigned: await COMPUTE.RESIGNED(
-        //       range.start,
-        //       range.end,
-        //       parsedData.data,
-        //     ),
-        //     away: await COMPUTE.AWAY(range.start, range.end, parsedData.data),
-        //     orientation: await COMPUTE.ORIENTATION(
-        //       range.start,
-        //       range.end,
-        //       parsedData.data,
-        //     ),
-        //     turbulence: 0,
-        //     predicted_functional: 0,
-        //     predicted_functional_travelers: 0,
-        //     predicted_functional_travelers_gap: 0,
-        //     predicted_functional_gap_needed: 0,
-        //     predicted_functional_gap_target: 0,
-        //   });
-        // }
-        ranges.forEach(async (range, index) => {
-          calculatedProjection.push({
+        const calculatedProjection = await Promise.all(
+          ranges.map(async range => ({
+            index: `${range.start} - ${range.end}`,
             start: range.start,
             end: range.end,
             functional: await COMPUTE.FUNCTIONAL(
@@ -156,27 +111,30 @@ const App = () => {
             predicted_functional_travelers_gap: 0,
             predicted_functional_gap_needed: 0,
             predicted_functional_gap_target: 0,
-            index: index,
-          });
-        });
-      };
-      autoCalculate();
-      setProjections(calculatedProjection);
-    }
+          })),
+        );
+        setProjections(calculatedProjection);
+      }
+    };
+
+    autoCalculate();
   }, [range, selectedDate, parsedData]);
 
-  const handleInputTurbulence = async (index, event) => {
-    const newProjections = [...projections];
+  const handleInputTurbulence = async (date, event) => {
+    const newProjections = projections.map(projection => {
+      if (projection.index === date) {
+        return {
+          ...projection,
+          turbulence: parseFloat(event.target.value) || 0,
+        };
+      }
+      return projection;
+    });
 
-    if (event.target.value) {
-      projections[index].turbulence = parseFloat(event.target.value);
-    } else {
-      projections[index].turbulence = 0;
-    }
-
-    await COMPUTE.PREDICTED_FUNCTIONAL(index, event.target.value, projections);
-
-    setProjections(newProjections);
+    const updatedProjections = await COMPUTE.PREDICTED_FUNCTIONAL(
+      newProjections,
+    );
+    setProjections(updatedProjections);
   };
 
   return (
@@ -194,7 +152,7 @@ const App = () => {
           paddingX={10}
           bg="lightcyan">
           <HStack>
-            <Text>Upload imported data </Text>
+            <Text>Upload imported data</Text>
             <input
               id="upload"
               type="file"
@@ -226,24 +184,14 @@ const App = () => {
           </HStack>
           <HStack>
             <span>Needed</span>
-            <NumberInput>
-              <NumberInputField
-                variant="outline"
-                placeholder="Needed Value"
-                value={needed}
-                onChange={e => setNeeded(e.target.value)}
-              />
+            <NumberInput value={needed} onChange={value => setNeeded(value)}>
+              <NumberInputField variant="outline" placeholder="Needed Value" />
             </NumberInput>
           </HStack>
           <HStack>
             <span>Target</span>
-            <NumberInput>
-              <NumberInputField
-                variant="outline"
-                placeholder="Target Value"
-                value={target}
-                onChange={e => setTarget(e.target.value)}
-              />
+            <NumberInput value={target} onChange={value => setTarget(value)}>
+              <NumberInputField variant="outline" placeholder="Target Value" />
             </NumberInput>
           </HStack>
         </SimpleGrid>

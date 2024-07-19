@@ -174,12 +174,7 @@ export const COMPUTE = {
 
     return totalNotYetStarted;
   },
-  PREDICTED_FUNCTIONAL: async (index, turbulence, projections) => {
-    // Ensure projections array is not empty and index is within bounds
-    if (!projections.length || index < 0 || index >= projections.length) {
-      throw new Error('Invalid index or projections array.');
-    }
-
+  PREDICTED_FUNCTIONAL: async projections => {
     // Iterate through each projection and compute predicted_functional
     projections.forEach((projection, idx) => {
       let accumulatedTurbulence = 0;

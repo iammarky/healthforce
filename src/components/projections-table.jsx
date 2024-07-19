@@ -72,10 +72,9 @@ export default function ProjectionsTable({
                 <Td> {row.away} </Td>
                 <Td> {row.orientation} </Td>
                 {showInput ? (
-                  <Td>
+                  <Td key={`${row.start} - ${row.end}`}>
                     <NumberInput>
                       <NumberInputField
-                        key={`${row.start}-${row.end}`}
                         placeholder={`${currentStartDate.toLocaleString(
                           'en-US',
                           {
@@ -84,7 +83,10 @@ export default function ProjectionsTable({
                         )} Turbulence`}
                         value={row.turbulence || ''}
                         onChange={event => {
-                          handleInputTurbulence(index, event);
+                          handleInputTurbulence(
+                            `${row.start} - ${row.end}`,
+                            event,
+                          );
                         }}
                       />
                     </NumberInput>
