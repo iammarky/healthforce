@@ -9,6 +9,7 @@ import {
   Center,
   NumberInput,
   NumberInputField,
+  Switch,
 } from '@chakra-ui/react';
 import { COMPUTE } from './helper/compute';
 import ImportedDataTable from './components/imported-data-table';
@@ -26,6 +27,7 @@ const App = () => {
   const [range, setRange] = useState('');
   const [needed, setNeeded] = useState('');
   const [target, setTarget] = useState('');
+  const [showAllCol, setShowAllCol] = useState(false);
 
   // Use useCallback to memoize the readFile function
   const readFile = useCallback(event => {
@@ -139,6 +141,8 @@ const App = () => {
     setProjections(updatedProjections);
   };
 
+  console.log(showAllCol);
+
   return (
     <>
       {parsedData.error && (
@@ -196,10 +200,19 @@ const App = () => {
               <NumberInputField variant="outline" placeholder="Target Value" />
             </NumberInput>
           </HStack>
+          <HStack>
+            <span>Show all columns</span>
+            <Switch
+              id="showAllCol"
+              isChecked={showAllCol}
+              onChange={e => setShowAllCol(e.target.checked)}
+            />
+          </HStack>
         </SimpleGrid>
         <ProjectionsTable
           projections={projections}
           handleInputTurbulence={handleInputTurbulence}
+          showAllCol={showAllCol}
         />
         <Divider />
         <ImportedDataTable
