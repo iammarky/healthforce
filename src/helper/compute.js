@@ -43,6 +43,8 @@ export const COMPUTE = {
       0,
     );
 
+    METHOD.updateOrPushNotes(start, end, filteredResignedData, 'travelers');
+
     return parseFloat(totalTraveler).toFixed(2);
   },
   ORIENTATION: async (start, end, data) => {
@@ -162,6 +164,8 @@ export const COMPUTE = {
       0,
     );
 
+    METHOD.updateOrPushNotes(start, end, filteredData, 'not_yet_started');
+
     return totalNotYetStarted;
   },
   RESIGNED: async (start, end, data) => {
@@ -172,12 +176,14 @@ export const COMPUTE = {
       return itemStart <= rangeEnd;
     });
 
-    const totalNotYetStarted = filteredData.reduce(
+    const totalResigned = filteredData.reduce(
       (acc, item) => acc + parseFloat(item['FTE']),
       0,
     );
 
-    return totalNotYetStarted;
+    METHOD.updateOrPushNotes(start, end, filteredData, 'resigned');
+
+    return totalResigned;
   },
   PREDICTED_FUNCTIONAL: async (needed = 0, target = 0, projections) => {
     // Iterate through each projection and compute predicted_functional
@@ -282,6 +288,26 @@ const METHOD = {
             'Away Return': item['Away Return'],
             FTE: item['FTE'],
           }))
+        : dataType === 'resigned'
+        ? filteredData.map(item => ({
+            'Last Name': item['Last Name'],
+            'First Name': item['First Name'],
+            Resignation: item['Resignation'],
+            FTE: item['FTE'],
+          }))
+        : dataType === 'travelers'
+        ? filteredData.map(item => ({
+            'Last Name': item['Last Name'],
+            'First Name': item['First Name'],
+            FTE: item['FTE'],
+          }))
+        : dataType === 'not_yet_started'
+        ? filteredData.map(item => ({
+            'Last Name': item['Last Name'],
+            'First Name': item['First Name'],
+            FTE: item['FTE'],
+            Start: item['Start'],
+          }))
         : [];
 
     // Ensure NOTES has the payPeriod entry
@@ -290,6 +316,9 @@ const METHOD = {
         payPeriod,
         away: [],
         orientation: [],
+        resigned: [],
+        travelers: [],
+        not_yet_started: [],
         // Initialize other data types here if needed
       };
     }
@@ -299,6 +328,12 @@ const METHOD = {
       NOTES[payPeriod].away = dataObject;
     } else if (dataType === 'orientation') {
       NOTES[payPeriod].orientation = dataObject;
+    } else if (dataType === 'resigned') {
+      NOTES[payPeriod].resigned = dataObject;
+    } else if (dataType === 'travelers') {
+      NOTES[payPeriod].travelers = dataObject;
+    } else if (dataType === 'not_yet_started') {
+      NOTES[payPeriod].not_yet_started = dataObject;
     }
   },
 };

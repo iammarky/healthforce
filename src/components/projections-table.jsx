@@ -20,7 +20,7 @@ import {
   PopoverArrow,
   PopoverCloseButton,
 } from '@chakra-ui/react';
-import { ListItem, UnorderedList } from '@chakra-ui/react';
+import { ListItem, UnorderedList, Box } from '@chakra-ui/react';
 import { NOTES } from '../helper/compute';
 
 export default function ProjectionsTable({
@@ -76,10 +76,101 @@ export default function ProjectionsTable({
                 </Td>
                 <Td> {row.functional} </Td>
                 <Td> {row.non_functional} </Td>
-                <Td> {row.travelers} </Td>
-                <Td> {row.not_yet_started} </Td>
+                {/* TRAVELERS */}
+                <Td>
+                  <Popover placement="top-start">
+                    <PopoverTrigger>
+                      <button>{row.travelers}</button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverHeader fontWeight="semibold">
+                        {NOTES[`${row.start} - ${row.end}`].payPeriod}
+                      </PopoverHeader>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverBody>
+                        <UnorderedList spacing={2}>
+                          {NOTES[`${row.start} - ${row.end}`].travelers.map(
+                            (item, index) => (
+                              <ListItem key={index}>
+                                <Text fontWeight="bold">
+                                  {item['First Name']} {item['Last Name']} -{' '}
+                                  {item.FTE} FTE
+                                </Text>
+                              </ListItem>
+                            ),
+                          )}
+                        </UnorderedList>
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                </Td>
+                {/* NOT YET STARTED */}
+                <Td>
+                  <Popover placement="top-start">
+                    <PopoverTrigger>
+                      <button>{row.not_yet_started}</button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverHeader fontWeight="semibold">
+                        {NOTES[`${row.start} - ${row.end}`].payPeriod}
+                      </PopoverHeader>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverBody>
+                        <UnorderedList spacing={2}>
+                          {NOTES[
+                            `${row.start} - ${row.end}`
+                          ].not_yet_started.map((item, index) => (
+                            <ListItem key={index}>
+                              <Text fontWeight="bold">
+                                {item['First Name']} {item['Last Name']} -{' '}
+                                {item.FTE} FTE
+                              </Text>
+                              <Box>
+                                <Text>Start: {item['Start']}</Text>
+                              </Box>
+                            </ListItem>
+                          ))}
+                        </UnorderedList>
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                </Td>
                 <Td> {row.total_fte} </Td>
-                <Td> {row.resigned} </Td>
+                {/* RESIGNED */}
+                <Td>
+                  <Popover placement="top-start">
+                    <PopoverTrigger>
+                      <button>{row.resigned}</button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverHeader fontWeight="semibold">
+                        {NOTES[`${row.start} - ${row.end}`].payPeriod}
+                      </PopoverHeader>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverBody>
+                        <UnorderedList spacing={2}>
+                          {NOTES[`${row.start} - ${row.end}`].resigned.map(
+                            (item, index) => (
+                              <ListItem key={index}>
+                                <Text fontWeight="bold">
+                                  {item['First Name']} {item['Last Name']} -{' '}
+                                  {item.FTE} FTE
+                                </Text>
+                                <Box>
+                                  <Text>Resigned: {item['Resignation']}</Text>
+                                </Box>
+                              </ListItem>
+                            ),
+                          )}
+                        </UnorderedList>
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                </Td>
+                {/* AWAY */}
                 <Td>
                   <Popover placement="top-start">
                     <PopoverTrigger>
@@ -92,14 +183,22 @@ export default function ProjectionsTable({
                       <PopoverArrow />
                       <PopoverCloseButton />
                       <PopoverBody>
-                        <UnorderedList>
+                        <UnorderedList spacing={2}>
                           {NOTES[`${row.start} - ${row.end}`].away.map(
                             (item, index) => (
                               <ListItem key={index}>
-                                <Text>
+                                <Text fontWeight="bold">
                                   {item['First Name']} {item['Last Name']} -{' '}
                                   {item.FTE} FTE
                                 </Text>
+                                <Box>
+                                  <Text>Away Start: {item['Away Start']}</Text>
+                                </Box>
+                                <Box>
+                                  <Text>
+                                    Away Return: {item['Away Return']}
+                                  </Text>
+                                </Box>
                               </ListItem>
                             ),
                           )}
@@ -108,6 +207,7 @@ export default function ProjectionsTable({
                     </PopoverContent>
                   </Popover>
                 </Td>
+                {/* ORIENTATION */}
                 <Td>
                   <Popover placement="top-start">
                     <PopoverTrigger>
@@ -120,14 +220,24 @@ export default function ProjectionsTable({
                       <PopoverArrow />
                       <PopoverCloseButton />
                       <PopoverBody>
-                        <UnorderedList>
+                        <UnorderedList spacing={2}>
                           {NOTES[`${row.start} - ${row.end}`].orientation.map(
                             (item, index) => (
                               <ListItem key={index}>
-                                <Text>
+                                <Text fontWeight="bold">
                                   {item['First Name']} {item['Last Name']} -{' '}
                                   {item.FTE} FTE
                                 </Text>
+                                <Box>
+                                  <Text>
+                                    Orientation Start: {item['Start']}
+                                  </Text>
+                                </Box>
+                                <Box>
+                                  <Text>
+                                    Orientation End: {item['Orientation End']}
+                                  </Text>
+                                </Box>
                               </ListItem>
                             ),
                           )}
@@ -136,6 +246,7 @@ export default function ProjectionsTable({
                     </PopoverContent>
                   </Popover>
                 </Td>
+                {/* TURBULENCE */}
                 {showInput ? (
                   <Td key={`${row.start} - ${row.end}`}>
                     <NumberInput>
