@@ -11,6 +11,17 @@ import {
   NumberInput,
   NumberInputField,
 } from '@chakra-ui/react';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverArrow,
+  PopoverCloseButton,
+} from '@chakra-ui/react';
+import { ListItem, UnorderedList } from '@chakra-ui/react';
+import { NOTES } from '../helper/compute';
 
 export default function ProjectionsTable({
   projections,
@@ -28,11 +39,11 @@ export default function ProjectionsTable({
             <Th>Functional</Th>
             <Th>Non-Functional</Th>
             <Th>Travelers</Th>
-            {/* <Th>Not Yet Started</Th>
+            <Th>Not Yet Started</Th>
             <Th>Total FTE</Th>
             <Th>Resigned</Th>
             <Th>Away</Th>
-            <Th>Orientation</Th> */}
+            <Th>Orientation</Th>
             <Th>Turbulence</Th>
             <Th>Predicted Functional</Th>
             <Th>Predicted Functional + Travelers</Th>
@@ -66,11 +77,65 @@ export default function ProjectionsTable({
                 <Td> {row.functional} </Td>
                 <Td> {row.non_functional} </Td>
                 <Td> {row.travelers} </Td>
-                {/* <Td> {row.not_yet_started} </Td>
+                <Td> {row.not_yet_started} </Td>
                 <Td> {row.total_fte} </Td>
                 <Td> {row.resigned} </Td>
-                <Td> {row.away} </Td>
-                <Td> {row.orientation} </Td> */}
+                <Td>
+                  <Popover placement="top-start">
+                    <PopoverTrigger>
+                      <button>{row.away}</button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverHeader fontWeight="semibold">
+                        {NOTES[`${row.start} - ${row.end}`].payPeriod}
+                      </PopoverHeader>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverBody>
+                        <UnorderedList>
+                          {NOTES[`${row.start} - ${row.end}`].away.map(
+                            (item, index) => (
+                              <ListItem key={index}>
+                                <Text>
+                                  {item['First Name']} {item['Last Name']} -{' '}
+                                  {item.FTE} FTE
+                                </Text>
+                              </ListItem>
+                            ),
+                          )}
+                        </UnorderedList>
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                </Td>
+                <Td>
+                  <Popover placement="top-start">
+                    <PopoverTrigger>
+                      <button>{row.orientation}</button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverHeader fontWeight="semibold">
+                        {NOTES[`${row.start} - ${row.end}`].payPeriod}
+                      </PopoverHeader>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverBody>
+                        <UnorderedList>
+                          {NOTES[`${row.start} - ${row.end}`].orientation.map(
+                            (item, index) => (
+                              <ListItem key={index}>
+                                <Text>
+                                  {item['First Name']} {item['Last Name']} -{' '}
+                                  {item.FTE} FTE
+                                </Text>
+                              </ListItem>
+                            ),
+                          )}
+                        </UnorderedList>
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                </Td>
                 {showInput ? (
                   <Td key={`${row.start} - ${row.end}`}>
                     <NumberInput>

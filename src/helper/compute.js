@@ -1,3 +1,4 @@
+export const NOTES = [];
 export const COMPUTE = {
   TOTAL_FTE: async (start, end, data) => {
     // Get the sum of all FTE
@@ -78,6 +79,8 @@ export const COMPUTE = {
       }
     }, 0);
 
+    METHOD.updateOrPushNotes(start, end, filteredData, 'orientation');
+
     return totalOrientation;
   },
   AWAY: async (start, end, data) => {
@@ -111,6 +114,8 @@ export const COMPUTE = {
         return acc + (isNaN(fte) ? 0 : fte);
       }
     }, 0);
+
+    METHOD.updateOrPushNotes(start, end, filteredData, 'away');
 
     return parseFloat(totalAway).toFixed(2);
   },
@@ -255,5 +260,45 @@ const METHOD = {
 
     // Check if orientation period overlaps with pay period
     return OS <= PE && OE >= PS;
+  },
+  updateOrPushNotes: (start, end, filteredData, dataType) => {
+    const payPeriod = `${start} - ${end}`;
+
+    // Define the data object based on dataType
+    const dataObject =
+      dataType === 'orientation'
+        ? filteredData.map(item => ({
+            'Last Name': item['Last Name'],
+            'First Name': item['First Name'],
+            Start: item['Start'],
+            'Orientation End': item['Orientation End'],
+            FTE: item['FTE'],
+          }))
+        : dataType === 'away'
+        ? filteredData.map(item => ({
+            'Last Name': item['Last Name'],
+            'First Name': item['First Name'],
+            'Away Start': item['Away Start'],
+            'Away Return': item['Away Return'],
+            FTE: item['FTE'],
+          }))
+        : [];
+
+    // Ensure NOTES has the payPeriod entry
+    if (!NOTES[payPeriod]) {
+      NOTES[payPeriod] = {
+        payPeriod,
+        away: [],
+        orientation: [],
+        // Initialize other data types here if needed
+      };
+    }
+
+    // Update the entry based on dataType
+    if (dataType === 'away') {
+      NOTES[payPeriod].away = dataObject;
+    } else if (dataType === 'orientation') {
+      NOTES[payPeriod].orientation = dataObject;
+    }
   },
 };
