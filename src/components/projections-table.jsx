@@ -62,13 +62,13 @@ export default function ProjectionsTable({
             let showInput = false;
 
             // Parse the current row's start date
-            const currentStartDate = new Date(row.start);
+            const currentStartDate = new Date(row.end);
 
             // Show the input box only for the first pay period in each month
             if (
               index === 0 ||
               (index > 0 &&
-                new Date(projections[index - 1].start).getMonth() !==
+                new Date(projections[index - 1].end).getMonth() !==
                   currentStartDate.getMonth())
             ) {
               showInput = true;
