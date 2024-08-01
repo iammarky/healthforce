@@ -284,11 +284,131 @@ export default function ProjectionsTable({
                 ) : (
                   <Td> </Td>
                 )}
-                <Td> {row.predicted_functional} </Td>
-                <Td> {row.predicted_functional_travelers} </Td>
-                <Td> {row.predicted_functional_travelers_gap} </Td>
-                <Td> {row.predicted_functional_gap_needed} </Td>
-                <Td> {row.predicted_functional_gap_target} </Td>
+                {/* PREDICTED FUNCTIONAL */}
+                <Td>
+                  <Popover placement="top-start">
+                    <PopoverTrigger>
+                      <button>{row.predicted_functional}</button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverHeader fontWeight="semibold">
+                        {NOTES[`${row.start} - ${row.end}`].payPeriod}
+                      </PopoverHeader>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverBody>
+                        <div
+                          key={index}
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              NOTES[`${row.start} - ${row.end}`]
+                                .predicted_functional,
+                          }}
+                        />
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                </Td>
+                {/* PREDICTED FUNCTIONAL TRAVELERS */}
+                <Td>
+                  <Popover placement="top-start">
+                    <PopoverTrigger>
+                      <button>{row.predicted_functional_travelers}</button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverHeader fontWeight="semibold">
+                        {NOTES[`${row.start} - ${row.end}`].payPeriod}
+                      </PopoverHeader>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverBody>
+                        <div
+                          key={index}
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              NOTES[`${row.start} - ${row.end}`]
+                                .predicted_functional_travelers,
+                          }}
+                        />
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                </Td>
+                {/* PREDICTED FUNCTIONAL TRAVELERS GAP */}
+                <Td>
+                  <Popover placement="top-start">
+                    <PopoverTrigger>
+                      <button>{row.predicted_functional_travelers_gap}</button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverHeader fontWeight="semibold">
+                        {NOTES[`${row.start} - ${row.end}`].payPeriod}
+                      </PopoverHeader>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverBody>
+                        <div
+                          key={index}
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              NOTES[`${row.start} - ${row.end}`]
+                                .predicted_functional_travelers_gap,
+                          }}
+                        />
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                </Td>
+                {/* PREDICTED FUNCTIONAL GAP NEEDED*/}
+                <Td>
+                  <Popover placement="top-start">
+                    <PopoverTrigger>
+                      <button>{row.predicted_functional_gap_needed}</button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverHeader fontWeight="semibold">
+                        {NOTES[`${row.start} - ${row.end}`].payPeriod}
+                      </PopoverHeader>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverBody>
+                        <div
+                          key={index}
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              NOTES[`${row.start} - ${row.end}`]
+                                .predicted_functional_gap_needed,
+                          }}
+                        />
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                </Td>
+                {/* PREDICTED FUNCTIONAL GAP TARGET*/}
+                <Td>
+                  <Popover placement="top-start">
+                    <PopoverTrigger>
+                      <button>{row.predicted_functional_gap_target}</button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverHeader fontWeight="semibold">
+                        {NOTES[`${row.start} - ${row.end}`].payPeriod}
+                      </PopoverHeader>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverBody>
+                        <div
+                          key={index}
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              NOTES[`${row.start} - ${row.end}`]
+                                .predicted_functional_gap_target,
+                          }}
+                        />
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                </Td>
               </Tr>
             );
           })}

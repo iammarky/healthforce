@@ -141,8 +141,6 @@ const App = () => {
     setProjections(updatedProjections);
   };
 
-  console.log(showAllCol);
-
   return (
     <>
       {parsedData.error && (

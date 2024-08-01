@@ -202,6 +202,26 @@ export const COMPUTE = {
         functional - (currentTurbulence + accumulatedTurbulence);
       projection.predicted_functional = predictedFunctional.toFixed(2);
 
+      METHOD.updateOrPushNotes(
+        projection.start,
+        projection.end,
+        null,
+        'predicted_functional',
+        ` LEGENDS:<br>
+          F  = Functional<br>
+          T  = Turbulence<br>
+          AT = Accumulated Turbulence<br>
+          PF = Predicted Functional<br><br>
+
+          FORMULA:<br>
+          F - (T + AT) = PF<br><br>
+
+          COMPUTATION:<br>
+          ${functional} - (${currentTurbulence} + ${accumulatedTurbulence}) = <b>${predictedFunctional.toFixed(
+          2,
+        )}</b>`,
+      );
+
       // Compute predicted_functional + travelers for the current pay period only
       const currentTravelers = parseFloat(projection.travelers);
       const predictedFunctionalTravelers =
@@ -209,21 +229,97 @@ export const COMPUTE = {
       projection.predicted_functional_travelers =
         predictedFunctionalTravelers.toFixed(2);
 
+      METHOD.updateOrPushNotes(
+        projection.start,
+        projection.end,
+        null,
+        'predicted_functional_travelers',
+        ` LEGENDS:<br>
+          PF = Predicted Functional<br>
+          T  = Traveler<br>
+          PFT = Predicted Functional Traveler<br><br>
+
+          FORMULA:<br>
+          PF + T = PFT<br><br>
+
+          COMPUTATION:<br>
+          ${predictedFunctional} + ${currentTravelers} = <b>${predictedFunctionalTravelers.toFixed(
+          2,
+        )}</b>`,
+      );
+
       // Compute predicted_functional + travelers gap (needed) for the current pay period only
       const predictedFunctionalTravelersGap =
         predictedFunctionalTravelers - needed;
       projection.predicted_functional_travelers_gap =
         predictedFunctionalTravelersGap.toFixed(2);
 
+      METHOD.updateOrPushNotes(
+        projection.start,
+        projection.end,
+        null,
+        'predicted_functional_travelers_gap',
+        ` LEGENDS:<br>
+          PFT = Predicted Functional Travelers<br>
+          N  = Needed<br>
+          PFTG = Predicted Functional Travelers Gap<br><br>
+
+          FORMULA:<br>
+          PFT - N = PFTG<br><br>
+
+          COMPUTATION:<br>
+          ${predictedFunctionalTravelers} - ${needed} = <b>${predictedFunctionalTravelersGap.toFixed(
+          2,
+        )}</b>`,
+      );
+
       // Compute predicted_functional_gap_needed for the current pay period only
       const predictedFunctionalGapNeeded = predictedFunctional - needed;
       projection.predicted_functional_gap_needed =
         predictedFunctionalGapNeeded.toFixed(2);
 
+      METHOD.updateOrPushNotes(
+        projection.start,
+        projection.end,
+        null,
+        'predicted_functional_gap_needed',
+        ` LEGENDS:<br>
+          PF = Predicted Functional<br>
+          N  = Needed<br>
+          PFGN = Predicted Functional Gap Needed<br><br>
+
+          FORMULA:<br>
+          PF - N = PFGN<br><br>
+
+          COMPUTATION:<br>
+          ${predictedFunctional} - ${needed} = <b>${predictedFunctionalGapNeeded.toFixed(
+          2,
+        )}</b>`,
+      );
+
       // Compute predicted_functional_gap_target for the current pay period only
       const predictedFunctionalGapTarget = predictedFunctional - target;
       projection.predicted_functional_gap_target =
         predictedFunctionalGapTarget.toFixed(2);
+
+      METHOD.updateOrPushNotes(
+        projection.start,
+        projection.end,
+        null,
+        'predicted_functional_gap_target',
+        ` LEGENDS:<br>
+          PF = Predicted Functional<br>
+          T  = Target<br>
+          PFGT = Predicted Functional Gap Target<br><br>
+
+          FORMULA:<br>
+          PF - T = PFGT<br><br>
+
+          COMPUTATION:<br>
+          ${predictedFunctional} - ${target} = <b>${predictedFunctionalGapTarget.toFixed(
+          2,
+        )}</b>`,
+      );
     });
 
     return projections;
@@ -267,7 +363,7 @@ const METHOD = {
     // Check if orientation period overlaps with pay period
     return OS <= PE && OE >= PS;
   },
-  updateOrPushNotes: (start, end, filteredData, dataType) => {
+  updateOrPushNotes: (start, end, filteredData, dataType, notes) => {
     const payPeriod = `${start} - ${end}`;
 
     // Define the data object based on dataType
@@ -319,6 +415,11 @@ const METHOD = {
         resigned: [],
         travelers: [],
         not_yet_started: [],
+        predicted_functional: '',
+        predicted_functional_travelers: '',
+        predicted_functional_travelers_gap: '',
+        predicted_functional_gap_needed: '',
+        predicted_functional_gap_target: '',
         // Initialize other data types here if needed
       };
     }
@@ -334,6 +435,16 @@ const METHOD = {
       NOTES[payPeriod].travelers = dataObject;
     } else if (dataType === 'not_yet_started') {
       NOTES[payPeriod].not_yet_started = dataObject;
+    } else if (dataType === 'predicted_functional') {
+      NOTES[payPeriod].predicted_functional = notes;
+    } else if (dataType === 'predicted_functional_travelers') {
+      NOTES[payPeriod].predicted_functional_travelers = notes;
+    } else if (dataType === 'predicted_functional_travelers_gap') {
+      NOTES[payPeriod].predicted_functional_travelers_gap = notes;
+    } else if (dataType === 'predicted_functional_gap_needed') {
+      NOTES[payPeriod].predicted_functional_gap_needed = notes;
+    } else if (dataType === 'predicted_functional_gap_target') {
+      NOTES[payPeriod].predicted_functional_gap_target = notes;
     }
   },
 };
